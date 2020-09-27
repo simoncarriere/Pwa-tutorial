@@ -1,4 +1,4 @@
-const staticCacheName = "site-static-v2";
+const staticCacheName = "site-static-v3";
 const dynamicCache = "site-dynamic-v1";
 const assets = [
   "/",
@@ -13,6 +13,17 @@ const assets = [
   "https://fonts.gstatic.com/s/materialicons/v55/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2",
   "/pages/fallback.html",
 ];
+
+// cache size limit function
+const limitCacheSize = (name, size) => {
+  caches.open(name).then((cache) => {
+    cache.keys().then((keys) => {
+      if (keys.length > size) {
+        cache.delete(keys[0]).then(limitCacheSize(name, size));
+      }
+    });
+  });
+};
 
 // install SW
 self.addEventListener("install", (evt) => {
@@ -53,6 +64,8 @@ self.addEventListener("fetch", (evt) => {
             // New Cache
             return caches.open(dynamicCache).then((cache) => {
               cache.put(evt.request.url, fetchRes.clone());
+              // Call cache size limit function
+              limitCacheSize(dynamicCache, 15);
               return fetchRes;
             });
           })
