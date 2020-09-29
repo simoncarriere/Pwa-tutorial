@@ -1,4 +1,4 @@
-const staticCacheName = "site-static-v3";
+const staticCacheName = "site-static-v4";
 const dynamicCache = "site-dynamic-v1";
 const assets = [
   "/",
@@ -52,28 +52,27 @@ self.addEventListener("activate", (evt) => {
 
 // fetch event
 self.addEventListener("fetch", (evt) => {
-  evt.respondWith(
-    //async promise
-    caches
-      .match(evt.request)
-      .then((cacheRes) => {
-        // looks for existing cach | OR | fetch it
-        return (
-          cacheRes ||
-          fetch(evt.request).then((fetchRes) => {
-            // New Cache
-            return caches.open(dynamicCache).then((cache) => {
-              cache.put(evt.request.url, fetchRes.clone());
-              // Call cache size limit function
-              limitCacheSize(dynamicCache, 15);
-              return fetchRes;
-            });
-          })
-        );
-      })
-      .catch(() => {
-        if (evt.request.url.indexOf(".html") > -1)
-          return caches.match("/pages/fallback.html");
-      })
-  );
+  //   evt.respondWith(
+  //     caches
+  //       .match(evt.request)
+  //       .then((cacheRes) => {
+  //         // looks for existing cach | OR | fetch it
+  //         return (
+  //           cacheRes ||
+  //           fetch(evt.request).then((fetchRes) => {
+  //             // New Cache
+  //             return caches.open(dynamicCache).then((cache) => {
+  //               cache.put(evt.request.url, fetchRes.clone());
+  //               // Call cache size limit function
+  //               limitCacheSize(dynamicCache, 15);
+  //               return fetchRes;
+  //             });
+  //           })
+  //         );
+  //       })
+  //       .catch(() => {
+  //         if (evt.request.url.indexOf(".html") > -1)
+  //           return caches.match("/pages/fallback.html");
+  //       })
+  //   );
 });
